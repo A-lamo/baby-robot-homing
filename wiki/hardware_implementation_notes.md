@@ -54,7 +54,6 @@ Required: a robot head with an microSD card. If possible, choose an SD card with
 
 ## 2. Recommended Assembly Sequence 
 The following steps aim to assemble a robot that is as close as possible to the robot's rest posture (i.e. the joint positions before the robot starts moving) in the simulator.
-
 Building blocks required: a head, servo motors, brick modules, and hinge parts.
 1. Before starting assembly, **connect only one servo** to the servo board in the head, then run `test_servos_sequential.py` to verify whether the general setup is correct (or use the alternative tests described below). The desired effect is a sweep from $0 \degree$ to $180 \degree$.
 	* ARIEL's default hinges are $180 \degree$ DSS-M15 hinges. Avoid using the $270 \degree$ hinges, which might cause problems.
@@ -86,6 +85,7 @@ Building blocks required: a head, servo motors, brick modules, and hinge parts.
 			* In this assembly, the up-down moving hinges in the forelimbs place the small black connectors at the front, while the hind limbs use the opposite orientation. This is a deliberate choice. If the hind limbs were placed the other way around and moved aggressively, the end brick modules might collide with the forelimbs, and the wires and extended parts of the black connector might pull against each other. This orientation is used for safety. This practice is also suggested.
 5. **Determine manually the neutral position**: 
 	> Despite the efforts in step 3, the hinges might still be slightly off from the neutral position (i.e. not perfectly "straight"). A mitigation strategy is to let the robot start from the designated neutral position instead of the default natural neutral position (namely, $90 \degree$). The actual command is therefore 90 plus the raw commanded degrees from the robot controller, clamped into $[0 \degree, 180 \degree]$. The code implementation is in `hardware/baby_hardware.py`.
+	> From this stage, it will be safer to operate the robot on a protective mat: ![mat](assets/mat.png)
 	1. Run the `robo` command, then run `set servo angle <servo nr> <angle>` repeatedly for every servo to find an angle that makes the servo move to the visually neutral position.
 		* For example: `set servo angle 0 85`, `set servo angle 0 95`.
 		* The two servo boards' port numbers start from 0 to 31, as labeled on the chip. To determine the servo numbers, either try them manually or run `test_servos_sequential.py`.
@@ -95,6 +95,8 @@ Building blocks required: a head, servo motors, brick modules, and hinge parts.
 	> Depending on the actual hinge direction, the output movement of the servos might be the opposite of the movement in the simulated robot. For example, in the simulator, a joint might be commanded to move up, but in the real robot, that joint moves down. For those joints, we add a negative sign to the commanded angle. The code implementation is in `hardware/baby_hardware.py`.
 	1. Run `helper/calibration/record_hinge_sweep.py` to record a video that lets each joint sweep over its minimum to maximum allowed angles (in the Mujoco simulator, that means from -90 rad to +90 rad).
 	2. Run `test_servos_sequential.py` to observe the actual sweeping of each joint. Record the joint number that differs from the simulator. Then edit `DEFAULT_SERVO_MAPPINGS` in `hardware/baby_hardware.py` -> `sign`.
+7. [If needed] **Test the RPi camera** using `hardware/test/record_camera_video.py` to record a short video.
+8. **Run and test the controller**: use `hardware/test/run_gait_no_camera.py` to run an individual gait controller. If higher-level modules are built on top of the gaits, as in `hardware/run_behavior_tree_hardware.py`, test them only after testing the individual gait.
 
 ## 3. Runtime Operations
 * **How to turn on the robot**: hold the small yellow button until the red light starts flickering constantly, then immediately release it. Repeat if it does not work.
@@ -141,4 +143,4 @@ Building blocks required: a head, servo motors, brick modules, and hinge parts.
 ## 5. Remaining Issues and Suggestions for Hardware Design
 1. Add an extra connection point in the hinge's motor. Two connections are not strong enough for aggressive movement in long arms or legs.
 2. Add two more screw holes to the robot's bottom lid. If only two are used, the robot is not stable enough. Adding screws will also lift the robot's head slightly, so the robot's limbs might no longer touch the ground as they do in the simulator. This might add an extra layer of error.
-3. Friction is a problem when running the robot. Wrapping the modules with tape might help.
+3. Friction is a problem when running the robot.

@@ -71,6 +71,30 @@ DEFAULT_SERVO_MAPPINGS = [
     ServoMapping(7, "robot1_hinge_7servo", 3, readback_channel=19, neutral_deg=96, sign=-1.0),
 ]
 
+# Servo mappings for the insect morphology (blocks/insect.py).
+# The channel wiring matches the baby robot; neutral_deg and sign values may
+# need physical re-calibration if the insect build differs from the baby robot.
+INSECT_SERVO_MAPPINGS = [
+    ServoMapping(0, "robot1_hinge_0servo", 31, readback_channel=15, neutral_deg=90, sign=1.0),
+    ServoMapping(1, "robot1_hinge_1servo", 30, readback_channel=14, neutral_deg=90, sign=1.0),
+    ServoMapping(2, "robot1_hinge_2servo", 29, readback_channel=13, neutral_deg=90, sign=1.0),
+    ServoMapping(3, "robot1_hinge_3servo", 28, readback_channel=12, neutral_deg=90, sign=1.0),
+    ServoMapping(4, "robot1_hinge_4servo", 0, readback_channel=16, neutral_deg=90, sign=1.0),
+    ServoMapping(5, "robot1_hinge_5servo", 1, readback_channel=17, neutral_deg=90, sign=1.0),
+    ServoMapping(6, "robot1_hinge_6servo", 2, readback_channel=18, neutral_deg=90, sign=1.0),
+    ServoMapping(7, "robot1_hinge_7servo", 3, readback_channel=19, neutral_deg=90, sign=1.0),
+]
+
+SERVO_MAPPINGS_BY_MORPHOLOGY: dict[str, list[ServoMapping]] = {
+    "baby": DEFAULT_SERVO_MAPPINGS,
+    "insect": INSECT_SERVO_MAPPINGS,
+}
+
+
+def get_servo_mappings_for_morphology(morphology: str) -> list[ServoMapping]:
+    """Return servo mappings for the named morphology, falling back to the default."""
+    return SERVO_MAPPINGS_BY_MORPHOLOGY.get(morphology, DEFAULT_SERVO_MAPPINGS)
+
 
 def timestamp() -> str:
     return time.strftime("%Y%m%d_%H%M%S")

@@ -53,6 +53,8 @@ class TrainingResult:
 
 @ray.remote
 def _evaluate_candidate(vector, config: GaitConfig) -> float:
+    if np.any(np.isnan(vector)):
+        return float("inf")
     return gait_fitness(vector, config)
 
 

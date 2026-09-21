@@ -75,6 +75,7 @@ class GaitConfig:
     mass_scale_max: float = 1.1
     joint_strength_scale_min: float = 0.7
     joint_strength_scale_max: float = 1.3
+    collision_weight: float = 1.5
     ray_runtime_env: dict = field(default_factory=lambda: RAY_RUNTIME_ENV)
 
     def __post_init__(self) -> None:

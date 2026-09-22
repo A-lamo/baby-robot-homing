@@ -406,8 +406,8 @@ def main() -> None:
     battery_csv = run_dir / "battery_samples.csv"
     csv_fields  = _csv_fields(num_joints, len(mappings))
 
-    robot  = BabyRobotHardware(mappings=mappings, beep=not args.no_beep, direct_mode=not args.delay_mode)
     camera = open_camera(args.width, args.height)
+    robot  = BabyRobotHardware(mappings=mappings, beep=not args.no_beep, direct_mode=not args.delay_mode)
 
     print(f"Results:     {run_dir}")
     print(f"Morphology:  {args.morphology}  joints={num_joints}  hz={control_hz:.1f}")

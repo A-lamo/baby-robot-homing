@@ -75,14 +75,14 @@ DEFAULT_SERVO_MAPPINGS = [
 # The channel wiring matches the baby robot; neutral_deg and sign values may
 # need physical re-calibration if the insect build differs from the baby robot.
 INSECT_SERVO_MAPPINGS = [
-    ServoMapping(0, "insect_hinge_0_neck",       31, readback_channel=15,   neutral_deg=90, sign=1.0),
-    ServoMapping(1, "insect_hinge_1_back",        30, readback_channel=14,   neutral_deg=90, sign=1.0),
-    ServoMapping(2, "insect_hinge_2_front_left",  16, readback_channel=None, neutral_deg=90, sign=1.0),
-    ServoMapping(3, "insect_hinge_3_front_right", 17, readback_channel=None, neutral_deg=90, sign=1.0),
-    ServoMapping(4, "insect_hinge_4_mid_right",   15, readback_channel=None, neutral_deg=90, sign=1.0),
-    ServoMapping(5, "insect_hinge_5_mid_left",    14, readback_channel=None, neutral_deg=90, sign=1.0),
-    ServoMapping(6, "insect_hinge_6_back_right",   1, readback_channel=None, neutral_deg=90, sign=1.0),
-    ServoMapping(7, "insect_hinge_7_back_left",    0, readback_channel=None, neutral_deg=90, sign=1.0),
+    ServoMapping(0, "insect_hinge_0_neck",       31, readback_channel=15,   neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(1, "insect_hinge_1_back",        30, readback_channel=14,   neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(2, "insect_hinge_2_front_left",  16, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(3, "insect_hinge_3_front_right", 17, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(4, "insect_hinge_4_mid_right",   15, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(5, "insect_hinge_5_mid_left",    14, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(6, "insect_hinge_6_back_right",   1, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
+    ServoMapping(7, "insect_hinge_7_back_left",    0, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
 ]
 
 SERVO_MAPPINGS_BY_MORPHOLOGY: dict[str, list[ServoMapping]] = {

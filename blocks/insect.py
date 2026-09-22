@@ -6,6 +6,7 @@ from ariel.body_phenotypes.robogen_lite.modules.core import CoreModule
 from ariel.body_phenotypes.robogen_lite.modules.hinge import HingeModule
 
 _INSECT_JOINT_RANGE = (-np.pi / 3, np.pi / 3)  # ±60°
+_INSECT_MID_LEFT_JOINT_RANGE = (-np.pi / 4, np.pi / 4)  # ±45° — avoids collision with front-left leg in hardware
 
 
 def insect_small() -> CoreModule:
@@ -64,7 +65,7 @@ def insect_small() -> CoreModule:
         body=brick_4.body,
         prefix="brick_4",
     )
-    hinge_5 = HingeModule(index=51, joint_range=_INSECT_JOINT_RANGE)
+    hinge_5 = HingeModule(index=51, joint_range=_INSECT_MID_LEFT_JOINT_RANGE)
     hinge_5.rotate(-90)
     brick_0.sites[ModuleFaces.LEFT].attach_body(
         body=hinge_5.body,

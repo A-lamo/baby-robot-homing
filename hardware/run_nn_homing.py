@@ -26,12 +26,94 @@ Usage example (Pi):
 from __future__ import annotations
 
 import argparse
+import io
 import math
 import sys
+import threading
 import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 
 import numpy as np
+
+
+# --------------------------------------------------------------------------- #
+#  Inline MJPEG streaming (optional, enabled with --stream-port)              #
+# --------------------------------------------------------------------------- #
+
+class _StreamBuffer:
+    """Thread-safe latest-frame store for the MJPEG server."""
+    def __init__(self):
+        self._frame: bytes = b""
+        self._cond  = threading.Condition()
+
+    def push(self, jpeg: bytes) -> None:
+        with self._cond:
+            self._frame = jpeg
+            self._cond.notify_all()
+
+    def wait_frame(self) -> bytes:
+        with self._cond:
+            self._cond.wait()
+            return self._frame
+
+
+_stream_buf: _StreamBuffer | None = None
+
+
+def _encode_jpeg(rgb: np.ndarray, quality: int = 70) -> bytes:
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.fromarray(rgb).save(buf, format="JPEG", quality=quality)
+    return buf.getvalue()
+
+
+class _MJPEGHandler(BaseHTTPRequestHandler):
+    _PAGE = (
+        b"<!DOCTYPE html><html><head><title>Robot Camera</title></head>"
+        b'<body style="margin:0;background:#000">'
+        b'<img src="/stream.mjpg" style="max-width:100%;display:block;margin:auto">'
+        b"</body></html>"
+    )
+
+    def log_message(self, *_):
+        pass
+
+    def do_GET(self):
+        if self.path in ("/", "/index.html"):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(self._PAGE)))
+            self.end_headers()
+            self.wfile.write(self._PAGE)
+        elif self.path == "/stream.mjpg":
+            self.send_response(200)
+            self.send_header("Cache-Control", "no-cache, private")
+            self.send_header("Content-Type", "multipart/x-mixed-replace; boundary=FRAME")
+            self.end_headers()
+            try:
+                while True:
+                    assert _stream_buf is not None
+                    frame = _stream_buf.wait_frame()
+                    self.wfile.write(b"--FRAME\r\n")
+                    self.send_header("Content-Type", "image/jpeg")
+                    self.send_header("Content-Length", str(len(frame)))
+                    self.end_headers()
+                    self.wfile.write(frame)
+                    self.wfile.write(b"\r\n")
+            except Exception:
+                pass
+        else:
+            self.send_error(404)
+
+
+def _start_stream_server(port: int) -> None:
+    global _stream_buf
+    _stream_buf = _StreamBuffer()
+    srv = HTTPServer(("0.0.0.0", port), _MJPEGHandler)
+    t = threading.Thread(target=srv.serve_forever, daemon=True)
+    t.start()
+    print(f"Stream:      http://0.0.0.0:{port}")
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -337,6 +419,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument("--no-beep",    action="store_true")
     parser.add_argument("--delay-mode", action="store_true")
+    parser.add_argument(
+        "--stream-port", type=int, default=0,
+        help="Start an MJPEG stream on this port (e.g. 8000). 0 = disabled.",
+    )
     return parser.parse_args()
 
 
@@ -406,6 +492,9 @@ def main() -> None:
     battery_csv = run_dir / "battery_samples.csv"
     csv_fields  = _csv_fields(num_joints, len(mappings))
 
+    if args.stream_port:
+        _start_stream_server(args.stream_port)
+
     camera = open_camera(args.width, args.height)
     robot  = BabyRobotHardware(mappings=mappings, beep=not args.no_beep, direct_mode=not args.delay_mode)
 
@@ -446,6 +535,8 @@ def main() -> None:
             raw = camera.capture_array()
             if args.camera_order == "bgr":
                 raw = raw[..., ::-1]          # BGR → RGB (no cv2 needed)
+            if _stream_buf is not None:
+                _stream_buf.push(_encode_jpeg(raw))
             mask   = isolate_color(raw, args.lower_hsv, args.upper_hsv)
             vision = analyze_sections_3(mask)
 

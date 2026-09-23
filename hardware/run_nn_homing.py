@@ -74,7 +74,7 @@ class NumpyNetwork:
         x = state.astype(np.float32)
         x = _elu(self.w1 @ x + self.b1)
         x = _elu(self.w2 @ x + self.b2)
-        x = np.tanh(self.w4 @ x + self.b4) * (math.pi / 2)
+        x = np.tanh(self.w4 @ x + self.b4) * (math.pi / 3)
         return x
 
 

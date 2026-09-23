@@ -80,7 +80,7 @@ INSECT_SERVO_MAPPINGS = [
     ServoMapping(2, "insect_hinge_2_front_left",  16, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
     ServoMapping(3, "insect_hinge_3_front_right", 17, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
     ServoMapping(4, "insect_hinge_4_mid_right",   15, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
-    ServoMapping(5, "insect_hinge_5_mid_left",    14, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=45, max_deg=135),
+    ServoMapping(5, "insect_hinge_5_mid_left",    14, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
     ServoMapping(6, "insect_hinge_6_back_right",   1, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
     ServoMapping(7, "insect_hinge_7_back_left",    0, readback_channel=None, neutral_deg=90, sign=1.0, min_deg=30, max_deg=150),
 ]

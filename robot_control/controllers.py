@@ -77,7 +77,7 @@ class CPGGaitController(nn.Module):
     def forward(self, turn: float, speed: float) -> np.ndarray:
         angles = self.cpg.forward(time=None)
         modulated = angles * float(speed) + self.turn_weights * float(turn) * 0.5
-        modulated = torch.clamp(modulated, -torch.pi / 3, torch.pi / 3)
+        modulated = torch.clamp(modulated, -torch.pi / 2, torch.pi / 2)
         return modulated.detach().numpy()
 
 

@@ -1,17 +1,13 @@
-import numpy as np
-
 from ariel.body_phenotypes.robogen_lite.config import ModuleFaces
 from ariel.body_phenotypes.robogen_lite.modules.brick import BrickModule
 from ariel.body_phenotypes.robogen_lite.modules.core import CoreModule
 from ariel.body_phenotypes.robogen_lite.modules.hinge import HingeModule
 
-_INSECT_JOINT_RANGE = (-np.pi / 3, np.pi / 3)  # ±60°
-
 
 def insect_small() -> CoreModule:
     """Custom robot body built with the 3D editor."""
     core = CoreModule(index=0)
-    hinge_0 = HingeModule(index=1, joint_range=_INSECT_JOINT_RANGE)
+    hinge_0 = HingeModule(index=1)
     core.sites[ModuleFaces.FRONT].attach_body(
         body=hinge_0.body,
         prefix="hinge_0",
@@ -21,7 +17,7 @@ def insect_small() -> CoreModule:
         body=brick_0.body,
         prefix="brick_0",
     )
-    hinge_1 = HingeModule(index=9, joint_range=_INSECT_JOINT_RANGE)
+    hinge_1 = HingeModule(index=9)
     brick_0.sites[ModuleFaces.FRONT].attach_body(
         body=hinge_1.body,
         prefix="hinge_1",
@@ -31,7 +27,7 @@ def insect_small() -> CoreModule:
         body=brick_1.body,
         prefix="brick_1",
     )
-    hinge_2 = HingeModule(index=53, joint_range=_INSECT_JOINT_RANGE)
+    hinge_2 = HingeModule(index=53)
     hinge_2.rotate(90)
     brick_1.sites[ModuleFaces.RIGHT].attach_body(
         body=hinge_2.body,
@@ -42,7 +38,7 @@ def insect_small() -> CoreModule:
         body=brick_2.body,
         prefix="brick_2",
     )
-    hinge_3 = HingeModule(index=55, joint_range=_INSECT_JOINT_RANGE)
+    hinge_3 = HingeModule(index=55)
     hinge_3.rotate(-90)
     brick_1.sites[ModuleFaces.LEFT].attach_body(
         body=hinge_3.body,
@@ -53,7 +49,7 @@ def insect_small() -> CoreModule:
         body=brick_3.body,
         prefix="brick_3",
     )
-    hinge_4 = HingeModule(index=49, joint_range=_INSECT_JOINT_RANGE)
+    hinge_4 = HingeModule(index=49)
     hinge_4.rotate(90)
     brick_0.sites[ModuleFaces.RIGHT].attach_body(
         body=hinge_4.body,
@@ -64,7 +60,7 @@ def insect_small() -> CoreModule:
         body=brick_4.body,
         prefix="brick_4",
     )
-    hinge_5 = HingeModule(index=51, joint_range=_INSECT_JOINT_RANGE)
+    hinge_5 = HingeModule(index=51)
     hinge_5.rotate(-90)
     brick_0.sites[ModuleFaces.LEFT].attach_body(
         body=hinge_5.body,
@@ -75,7 +71,7 @@ def insect_small() -> CoreModule:
         body=brick_5.body,
         prefix="brick_5",
     )
-    hinge_6 = HingeModule(index=33, joint_range=_INSECT_JOINT_RANGE)
+    hinge_6 = HingeModule(index=33)
     hinge_6.rotate(-90)
     core.sites[ModuleFaces.RIGHT].attach_body(
         body=hinge_6.body,
@@ -86,7 +82,7 @@ def insect_small() -> CoreModule:
         body=brick_6.body,
         prefix="brick_6",
     )
-    hinge_7 = HingeModule(index=43, joint_range=_INSECT_JOINT_RANGE)
+    hinge_7 = HingeModule(index=43)
     hinge_7.rotate(90)
     core.sites[ModuleFaces.LEFT].attach_body(
         body=hinge_7.body,

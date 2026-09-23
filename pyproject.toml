@@ -6,7 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "bachlor-project"
 version = "0.1.0"
 requires-python = ">=3.12,<3.13"
-dependencies = ["ariel"]
+dependencies = []
+
+[project.optional-dependencies]
+training = ["ariel"]
+hardware = ["picamera2"]
 
 [tool.uv.sources]
 ariel = { path = "ariel", editable = true }

@@ -68,6 +68,13 @@ def _encode_jpeg(rgb: np.ndarray, quality: int = 70) -> bytes:
     return buf.getvalue()
 
 
+def _debug_frame(rgb: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """Dim non-detected pixels and highlight detections in bright green."""
+    out = (rgb * 0.25).astype(np.uint8)
+    out[mask == 1] = (0, 220, 0)
+    return out
+
+
 class _MJPEGHandler(BaseHTTPRequestHandler):
     _PAGE = (
         b"<!DOCTYPE html><html><head><title>Robot Camera</title></head>"
@@ -423,6 +430,10 @@ def parse_args() -> argparse.Namespace:
         "--stream-port", type=int, default=0,
         help="Start an MJPEG stream on this port (e.g. 8000). 0 = disabled.",
     )
+    parser.add_argument(
+        "--debug-vision", action="store_true",
+        help="Stream the green detection mask instead of the raw frame (requires --stream-port).",
+    )
     return parser.parse_args()
 
 
@@ -535,10 +546,11 @@ def main() -> None:
             raw = camera.capture_array()
             if args.camera_order == "bgr":
                 raw = raw[..., ::-1]          # BGR → RGB (no cv2 needed)
-            if _stream_buf is not None:
-                _stream_buf.push(_encode_jpeg(raw))
             mask   = isolate_color(raw, args.lower_hsv, args.upper_hsv)
             vision = analyze_sections_3(mask)
+            if _stream_buf is not None:
+                frame = _debug_frame(raw, mask) if args.debug_vision else raw
+                _stream_buf.push(_encode_jpeg(frame))
 
             # Orientation
             imu       = robot.read_imu(start_time)
